@@ -1,0 +1,62 @@
+# Core Data Science and ML Libraries
+pandas>=1.5.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+xgboost>=1.7.0
+lightgbm>=3.3.0
+
+# Deep Learning
+tensorflow>=2.13.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Explainable AI Libraries
+shap>=0.42.0
+lime>=0.2.0
+eli5>=0.13.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# Data Processing
+scipy>=1.10.0
+imbalanced-learn>=0.11.0
+
+# Configuration and Utilities
+pyyaml>=6.0
+python-dotenv>=1.0.0
+click>=8.1.0
+tqdm>=4.65.0
+
+# Networking and Security
+scapy>=2.5.0
+cryptography>=41.0.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+pre-commit>=3.3.0
+
+# Jupyter and Notebooks
+jupyter>=1.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.1.0
+
+# Model Monitoring and Logging
+mlflow>=2.5.0
+wandb>=0.15.0
+
+# API and Web Framework (for future deployment)
+fastapi>=0.100.0
+uvicorn>=0.23.0
+streamlit>=1.25.0
+
+# Additional Utilities
+joblib>=1.3.0
+dill>=0.3.7
+requests>=2.31.0
