@@ -19,7 +19,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/xai-intrusion-detection.git
+   git clone https://github.com/krishna1164/xai-intrusion-detection.git
    cd xai-intrusion-detection
    ```
 
@@ -40,7 +40,7 @@ For contributors and developers:
 
 1. **Clone with development dependencies**
    ```bash
-   git clone https://github.com/yourusername/xai-intrusion-detection.git
+   git clone https://github.com/krishna1164/xai-intrusion-detection.git
    cd xai-intrusion-detection
    ```
 
@@ -180,5 +180,5 @@ pip install -e . --upgrade
 
 For Docker users:
 ```bash
-docker pull yourusername/xai-intrusion-detection:latest
+docker pull krishna1164/xai-intrusion-detection:latest
 ```
