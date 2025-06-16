@@ -1,0 +1,145 @@
+# Logging configuration for the XAI Intrusion Detection System
+
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  default:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+    
+  detailed:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(module)s - %(funcName)s:%(lineno)d - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+    
+  json:
+    format: '{"timestamp": "%(asctime)s", "logger": "%(name)s", "level": "%(levelname)s", "module": "%(module)s", "function": "%(funcName)s", "line": %(lineno)d, "message": "%(message)s"}'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: default
+    stream: ext://sys.stdout
+    
+  file_info:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: detailed
+    filename: outputs/logs/xai_ids.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    mode: a
+    
+  file_debug:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: detailed
+    filename: outputs/logs/debug.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 3
+    mode: a
+    
+  file_error:
+    class: logging.handlers.RotatingFileHandler
+    level: ERROR
+    formatter: detailed
+    filename: outputs/logs/errors.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 10
+    mode: a
+    
+  # JSON structured logging for production
+  json_file:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: json
+    filename: outputs/logs/structured.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    mode: a
+
+# Logger configuration for different modules
+loggers:
+  # Main application logger
+  xai_ids:
+    level: DEBUG
+    handlers: [console, file_info, file_debug, file_error]
+    propagate: false
+    
+  # Specific module loggers
+  xai_ids.data_loader:
+    level: DEBUG
+    handlers: [console, file_info, file_debug]
+    propagate: false
+    
+  xai_ids.model_trainer:
+    level: DEBUG
+    handlers: [console, file_info, file_debug]
+    propagate: false
+    
+  xai_ids.explainer:
+    level: DEBUG
+    handlers: [console, file_info, file_debug]
+    propagate: false
+    
+  xai_ids.real_time_detector:
+    level: INFO
+    handlers: [console, file_info, json_file]
+    propagate: false
+    
+  xai_ids.security_analyzer:
+    level: INFO
+    handlers: [console, file_info, json_file]
+    propagate: false
+    
+  xai_ids.adversarial_analysis:
+    level: DEBUG
+    handlers: [console, file_info, file_debug]
+    propagate: false
+    
+  # Third-party library loggers
+  sklearn:
+    level: WARNING
+    handlers: [file_debug]
+    propagate: false
+    
+  xgboost:
+    level: WARNING
+    handlers: [file_debug]
+    propagate: false
+    
+  tensorflow:
+    level: ERROR
+    handlers: [file_error]
+    propagate: false
+    
+  matplotlib:
+    level: WARNING
+    handlers: []
+    propagate: false
+
+# Root logger configuration
+root:
+  level: INFO
+  handlers: [console, file_info]
+
+# Performance logging
+performance:
+  log_execution_time: true
+  log_memory_usage: true
+  log_model_metrics: true
+  
+# Security logging
+security:
+  log_failed_authentications: true
+  log_suspicious_activities: true
+  log_access_attempts: true
+  
+# Production settings
+production:
+  log_level: INFO
+  enable_json_logging: true
+  enable_remote_logging: false
+  remote_logging_endpoint: 'https://your-log-aggregator.com/api/logs'
