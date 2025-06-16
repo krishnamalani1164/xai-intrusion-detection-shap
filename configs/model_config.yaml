@@ -1,0 +1,236 @@
+# Model hyperparameters and training configuration
+
+models:
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 5
+    min_samples_leaf: 2
+    max_features: 'sqrt'
+    bootstrap: true
+    n_jobs: -1
+    random_state: 42
+    class_weight: 'balanced'
+    
+  xgboost:
+    n_estimators: 100
+    max_depth: 6
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_alpha: 0.1
+    reg_lambda: 1.0
+    random_state: 42
+    n_jobs: -1
+    eval_metric: 'logloss'
+    
+  neural_network:
+    hidden_layers: [128, 64, 32]
+    activation: 'relu'
+    dropout_rate: 0.3
+    learning_rate: 0.001
+    batch_size: 32
+    epochs: 50
+    early_stopping_patience: 10
+    validation_split: 0.2
+    optimizer: 'adam'
+    loss: 'binary_crossentropy'
+    
+  svm:
+    kernel: 'rbf'
+    C: 1.0
+    gamma: 'scale'
+    probability: true
+    class_weight: 'balanced'
+    cache_size: 200
+
+ensemble:
+  voting_classifier:
+    voting: 'soft'  # 'hard' or 'soft'
+    weights: [1, 1, 1, 1]  # weights for RF, XGB, NN, SVM
+
+hyperparameter_tuning:
+  method: 'grid_search'  # 'grid_search', 'random_search', 'bayesian'
+  cv_folds: 5
+  scoring: 'f1_macro'
+  n_jobs: -1
+  random_state: 42
+  
+  # Grid search parameters
+  random_forest_grid:
+    n_estimators: [50, 100, 200]
+    max_depth: [5, 10, 15, null]
+    min_samples_split: [2, 5, 10]
+    
+  xgboost_grid:
+    n_estimators: [50, 100, 150]
+    max_depth: [3, 6, 9]
+    learning_rate: [0.01, 0.1, 0.2]
+
+training:
+  cross_validation: true
+  cv_folds: 5
+  shuffle: true
+  random_state: 42
+  
+evaluation:
+  metrics:
+    - 'accuracy'
+    - 'precision'
+    - 'recall'
+    - 'f1_score'
+    - 'roc_auc'
+    - 'confusion_matrix'
+  
+  threshold_optimization: true
+  cost_sensitive: true
+
+model_persistence:
+  save_path: 'models/trained_models/'
+  save_format: 'joblib'  # 'joblib' or 'pickle'
+  save_metadata: true
+  versioning: true
+
+---
+
+# configs/data_config.yaml
+# Data processing and feature engineering configuration
+
+data_sources:
+  primary_dataset: 'NSL-KDD'
+  datasets:
+    nsl_kdd:
+      train_file: 'KDDTrain+.txt'
+      test_file: 'KDDTest+.txt'
+      url: 'https://www.unb.ca/cic/datasets/nsl.html'
+      
+    cicids2017:
+      files: ['Monday-WorkingHours.pcap_ISCX.csv', 'Tuesday-WorkingHours.pcap_ISCX.csv']
+      url: 'https://www.unb.ca/cic/datasets/ids-2017.html'
+      
+    unsw_nb15:
+      train_file: 'UNSW_NB15_training-set.csv'
+      test_file: 'UNSW_NB15_testing-set.csv'
+      url: 'https://research.unsw.edu.au/projects/unsw-nb15-dataset'
+
+paths:
+  raw_data: 'data/raw/'
+  processed_data: 'data/processed/'
+  external_data: 'data/external/'
+  feature_store: 'data/processed/features/'
+
+preprocessing:
+  # Data cleaning
+  handle_missing_values: true
+  missing_strategy: 'median'  # 'mean', 'median', 'mode', 'drop'
+  remove_duplicates: true
+  remove_outliers: true
+  outlier_method: 'iqr'  # 'iqr', 'zscore', 'isolation_forest'
+  
+  # Feature encoding
+  encode_categorical: true
+  categorical_encoding: 'label'  # 'label', 'onehot', 'target'
+  handle_unknown_categories: 'ignore'
+  
+  # Feature scaling
+  normalize_features: true
+  scaling_method: 'standard'  # 'standard', 'minmax', 'robust', 'quantile'
+  
+  # Feature selection
+  feature_selection: true
+  selection_method: 'mutual_info'  # 'mutual_info', 'chi2', 'f_classif', 'rfe'
+  n_features: 20
+  
+  # Data balancing
+  balance_data: true
+  balancing_method: 'smote'  # 'smote', 'adasyn', 'random_oversample', 'random_undersample'
+
+feature_engineering:
+  create_derived_features: true
+  polynomial_features: false
+  polynomial_degree: 2
+  interaction_features: true
+  
+  # Time-based features (if timestamp available)
+  time_features: false
+  extract_hour: true
+  extract_day_of_week: true
+  extract_month: true
+  
+  # Domain-specific features for network traffic
+  network_features:
+    create_ratios: true
+    create_aggregations: true
+    window_features: true
+    statistical_features: true
+
+data_splitting:
+  strategy: 'stratified'  # 'stratified', 'random', 'time_series'
+  test_size: 0.2
+  validation_size: 0.2
+  random_state: 42
+  shuffle: true
+
+data_validation:
+  validate_schema: true
+  check_data_drift: true
+  statistical_tests: true
+  quality_checks:
+    - 'missing_values'
+    - 'duplicate_rows'
+    - 'data_types'
+    - 'value_ranges'
+    - 'categorical_values'
+
+# NSL-KDD specific column definitions
+nsl_kdd_columns:
+  features:
+    - 'duration'
+    - 'protocol_type'
+    - 'service'
+    - 'flag'
+    - 'src_bytes'
+    - 'dst_bytes'
+    - 'land'
+    - 'wrong_fragment'
+    - 'urgent'
+    - 'hot'
+    - 'num_failed_logins'
+    - 'logged_in'
+    - 'num_compromised'
+    - 'root_shell'
+    - 'su_attempted'
+    - 'num_root'
+    - 'num_file_creations'
+    - 'num_shells'
+    - 'num_access_files'
+    - 'num_outbound_cmds'
+    - 'is_host_login'
+    - 'is_guest_login'
+    - 'count'
+    - 'srv_count'
+    - 'serror_rate'
+    - 'srv_serror_rate'
+    - 'rerror_rate'
+    - 'srv_rerror_rate'
+    - 'same_srv_rate'
+    - 'diff_srv_rate'
+    - 'srv_diff_host_rate'
+    - 'dst_host_count'
+    - 'dst_host_srv_count'
+    - 'dst_host_same_srv_rate'
+    - 'dst_host_diff_srv_rate'
+    - 'dst_host_same_src_port_rate'
+    - 'dst_host_srv_diff_host_rate'
+    - 'dst_host_serror_rate'
+    - 'dst_host_srv_serror_rate'
+    - 'dst_host_rerror_rate'
+    - 'dst_host_srv_rerror_rate'
+  target: 'attack_type'
+  
+attack_categories:
+  normal: ['normal']
+  dos: ['back', 'land', 'neptune', 'pod', 'smurf', 'teardrop']
+  probe: ['ipsweep', 'nmap', 'portsweep', 'satan']
+  r2l: ['ftp_write', 'guess_passwd', 'imap', 'multihop', 'phf', 'spy', 'warezclient', 'warezmaster']
+  u2r: ['buffer_overflow', 'loadmodule', 'perl', 'rootkit']
